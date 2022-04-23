@@ -1,5 +1,6 @@
 <script lang="ts">
     import Navbar from "$lib/components/Navbar.svelte";
+    import { page } from '$app/stores';
     import "@kahi-ui/framework/dist/kahi-ui.framework.css";
     import "@kahi-ui/framework/dist/kahi-ui.theme.default.css";
     import { onMount } from 'svelte'
@@ -32,9 +33,15 @@
             $provider.getBalance($account).then(bal => $walletBalance = bal)
         }) 
     }
+
+    const pages = ["/list", "/rest", "/resolve"];
 </script>
 <Navbar></Navbar>
-<slot />
+{#if pages.includes($page.url.pathname) && $walletBalance === null}
+    <h2>Please connect via Metamask</h2>
+{:else}
+    <slot />
+{/if}
 
 <div id="background-radial-gradient" style="width: 200vw;height: 200vh;transform: translate(-50vw, -100vh);"></div>
 <style>
