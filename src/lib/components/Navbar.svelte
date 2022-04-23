@@ -1,6 +1,7 @@
 <script lang="ts">
     import { browser } from "$app/env";
-    import { Omni, Button, Divider, Ellipsis, Text } from "@kahi-ui/framework";
+    import { page } from '$app/stores';
+    import { Omni, Button, Divider, Ellipsis, Text, Menu, Spacer, Anchor } from "@kahi-ui/framework";
     import { account } from '$lib/stores/ethers'
     import ThemeBtn from "./ThemeBtn.svelte";
     
@@ -13,8 +14,26 @@
 </script>
 <Omni.Container margin="auto" style="background: none; min-width: ">
     <Omni.Header>
-        ENSMarket
+        <Anchor href="/" style="text-decoration: none;">
+            ENSRental
+        </Anchor>
     </Omni.Header>
+    <Omni.Section>
+        <Menu.Container
+            orientation="horizontal"
+        >
+            <Anchor href="/list" style="text-decoration: none;">
+                <Menu.Button active={$page.url.pathname === '/list'}>List</Menu.Button>
+            </Anchor>
+            <Anchor href="/rent" style="text-decoration: none;">
+                <Menu.Button active={$page.url.pathname === '/rent'}>Rent</Menu.Button>
+            </Anchor>
+            <Anchor href="/resolve" style="text-decoration: none;">
+                <Menu.Button active={$page.url.pathname === '/resolve'}>Resolve domain</Menu.Button>
+            </Anchor>
+        </Menu.Container>
+    </Omni.Section>
+    <Spacer />
     <Omni.Footer>
         {#if !$account}  
             <Button palette="accent" on:click={requestAccount} disabled={isConnectPending}>

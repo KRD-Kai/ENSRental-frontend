@@ -3,10 +3,6 @@
 
 </script>
 
-{#if $account && $walletBalance}
-    Welcome {$account}
-    <br>
-    Your balance is {$walletBalance}
-{/if}
+<h1>ENS MARKET</h1>
 
 
