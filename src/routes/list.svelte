@@ -1,8 +1,14 @@
 <script lang="ts">
-	import { account, provider, walletBalance } from '$lib/stores/ethers'
-    import { Button, Card, Spacer, Text, Badge, Container } from '@kahi-ui/framework';
+	import ListModal from '$lib/components/ListModal.svelte';
+    import { account, provider, walletBalance } from '$lib/stores/ethers'
+    import { Button, Card, Container } from '@kahi-ui/framework';
     import { onMount } from 'svelte'
+    import { ensMarket, baseRegistrar} from "$lib/stores/ethers";
+
     let domains;
+    let isModalOpen = false;
+    let labelName: string;
+
     async function getDomains(acc) {
         const response = await fetch("https://api.thegraph.com/subgraphs/name/ensdomains/ensrinkeby", {
             method: 'POST',
@@ -17,6 +23,7 @@
                             id
                             domain {
                                 name
+                                labelName
                                 id
                             }
                         }
@@ -29,9 +36,9 @@
         console.log(domains)
         return domains
     }
-    onMount(async () => {
-        domains = await getDomains($account);
-	})
+    $: {
+        if($account) { getDomains($account).then(dms => domains = dms ) }
+    }
 </script>
 <Container padding="small" style="display: flex; justify-content: center">
     {#if domains?.length}
@@ -46,14 +53,22 @@
                 </Card.Header>
 
                 <Card.Footer>
-                    <Button>List Domain</Button>
+                    <Button on:click={() => {
+                        isModalOpen = !isModalOpen; 
+                        labelName = domain.labelName;
+                    }}>
+                        List Domain
+                    </Button>
                 </Card.Footer>
             </Card.Container>
         {/each}
+        <br> 
     {:else}
         No domains!
     {/if}
 </Container>
+<Button palette="affirmative" 
+            on:click={() => $baseRegistrar.setApprovalForAll($ensMarket.address, true)
+        }>Approve all</Button>
 
-<style>
-</style>
+<ListModal bind:logic_state={isModalOpen} {labelName}></ListModal>
